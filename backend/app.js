@@ -31,11 +31,13 @@ app.get('/add-user', (req, res) => {
     });
 })
 
-
+//middleware and static files
 
 app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true })); //this allows us to use post .body on req object
 app.use(morgan('dev'));
 
+//routing, most of this should be done thorough Vue
 app.get('/', (req, res) => {
     
     res.sendFile('./views/index.html', { root: __dirname });
