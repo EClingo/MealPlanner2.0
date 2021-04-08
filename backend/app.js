@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose')
 const User = require('./models/user');
+const cors = require('cors');
 
 //create express app
 const app = express();
@@ -12,31 +13,28 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then((result) => app.listen(3000))
 .catch((err) => {
     console.log(err);
-})
-//sandbox route to test models and db connection
-app.get('/add-user', (req, res) => {
+});
 
-    const user = new User({
-        name: 'Eric',
-        email: 'eric@clingo.io',
-        householdCount: 5
-    });
-    
+//middleware and static files
+app.use(express.json());//this allowed me to see json object in post req
+app.use(cors());
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true })); //this allows us to use post .body on req object
+app.use(morgan('dev'));
+
+//sandbox route to test models and db connection
+app.post('/newuser', (req, res) => {
+    let user = new User(req.body);
+    console.log(req.body);
     user.save()
     .then((result) => {
+        
         res.send(result)
     })
     .catch((err) => {
         console.log(err)
     });
-})
-
-//middleware and static files
-
-app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true })); //this allows us to use post .body on req object
-app.use(morgan('dev'));
-
+});
 //routing, most of this should be done thorough Vue
 app.get('/', (req, res) => {
     
