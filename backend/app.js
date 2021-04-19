@@ -2,13 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose')
 const User = require('./models/user');
+const Recipe = require('./models/recipie');
 const cors = require('cors');
 
 //create express app
 const app = express();
 
 //connect to MongoDb 
-const dbURI = 'mongodb+srv://eric_c:godmoney99@mealplanner.dsofb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const dbURI = 'mongodb+srv://eric_c:godmoney99@mealplanner.dsofb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then((result) => app.listen(3000))
 .catch((err) => {
@@ -35,6 +36,16 @@ app.post('/newuser', (req, res) => {
         console.log(err)
     });
 });
+app.post('/recipies', (req, res) => {
+    let recipe = new Recipe(req.body);
+    recipe.save()
+    .then((result) => {
+        res.send(result)
+    })
+    .catch((err) => {
+        console.log(err)
+    });
+})
 //routing, most of this should be done thorough Vue
 app.get('/', (req, res) => {
     
